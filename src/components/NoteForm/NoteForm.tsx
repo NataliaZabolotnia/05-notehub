@@ -2,15 +2,27 @@ import css from "./NoteForm.module.css"
 import { Formik,Form,Field,ErrorMessage } from "formik"
 import *as Yup from "yup"
 import type { NewNote } from "../../types/note"
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { postNote } from "../../services/noteService"
+
 
 interface NoteFormProps{
-  onSubmit: (values: NewNote) => void;
   onCancel: () => void;  
 }
 
 
 
-export default function NoteForm({onSubmit,onCancel}:NoteFormProps){
+export default function NoteForm({onCancel}:NoteFormProps){
+ const queryClient = useQueryClient();
+
+const mutation = useMutation({
+    mutationFn: postNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+      onCancel(); 
+    }
+  });
+
 
 const initialValues:NewNote={
 title:"",
@@ -38,7 +50,7 @@ return (
 <Formik 
 initialValues={initialValues}
 validationSchema={validationSchema}
-onSubmit={onSubmit}>     
+onSubmit={(values)=> mutation.mutate(values)}>     
 <Form className={css.form}>
   <div className={css.formGroup}>
     <label htmlFor="title">Title</label>
@@ -76,7 +88,7 @@ onSubmit={onSubmit}>
     <button
       type="submit"
       className={css.submitButton}
-      disabled = {false}
+      disabled = {mutation.isPending}
     >
       Create note
     </button>

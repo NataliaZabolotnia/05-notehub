@@ -8,12 +8,14 @@ import type { Note,NewNote } from "../types/note";
 const myKey=import.meta.env.VITE_NOTEHUB_TOKEN;
 
 export const fetchNotes =async(page:number,searchText:string):Promise<FetchNotesResponse>=>{
-    const res=await axios.get<FetchNotesResponse>(`https://notehub-public.goit.study/api/notes`, {
-params: {
+   const params = {
     page,
     perPage: 12,
-    search: searchText
-  },
+    ...(searchText.trim() && { search: searchText.trim() }) // ← умовно додає search
+  }; 
+    
+    const res=await axios.get<FetchNotesResponse>(`https://notehub-public.goit.study/api/notes`, {
+params,
 headers: {
 Authorization: `Bearer ${myKey}`
 }})
@@ -38,10 +40,10 @@ Authorization: `Bearer ${myKey}`
 }
 
 
-export const searchNote=async()=>{
-     const res=await axios.get<Note>(`https://notehub-public.goit.study/api/note?search=mysearchtext`,{
-headers: {
-Authorization: `Bearer ${myKey}`
-}})
-        return res.data;
-}
+// export const searchNote=async()=>{
+//      const res=await axios.get<Note>(`https://notehub-public.goit.study/api/note?search=mysearchtext`,{
+// headers: {
+// Authorization: `Bearer ${myKey}`
+// }})
+//         return res.data;
+// }
