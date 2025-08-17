@@ -40,10 +40,3 @@ Authorization: `Bearer ${myKey}`
 }
 
 
-// export const searchNote=async()=>{
-//      const res=await axios.get<Note>(`https://notehub-public.goit.study/api/note?search=mysearchtext`,{
-// headers: {
-// Authorization: `Bearer ${myKey}`
-// }})
-//         return res.data;
-// }
